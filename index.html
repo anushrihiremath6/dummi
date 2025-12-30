@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Just for You 🤍</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(120deg, #2b5876, #4e4376);
+  overflow-x: hidden;
+  color: #fff;
+}
+
+/* Card */
+.card {
+  position: relative;
+  max-width: 420px;
+  margin: 60px auto;
+  background: rgba(0,0,0,0.35);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  z-index: 10;
+  animation: fadeIn 2s ease;
+}
+
+h1 { font-size: 2em; margin-bottom: 5px; }
+h2 { font-weight: 300; opacity: 0.9; }
+p { line-height: 1.6; font-size: 1.05em; }
+
+.heart { font-size: 2.5em; animation: beat 1.3s infinite; }
+
+/* Slideshow */
+.slideshow {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 16/9;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 15px 0;
+  position: relative;
+}
+
+.slideshow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.slideshow img.active { display: block; }
+
+/* Pause Button */
+#pauseBtn {
+  font-size: 0.85em;
+  opacity: 0.6;
+  cursor: pointer;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* Secret Message */
+.secret-btn {
+  margin-top: 18px;
+  font-size: 0.85em;
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.secret-message {
+  display: none;
+  margin-top: 15px;
+  font-size: 1.2em;
+  color: #ffdde1;
+}
+
+/* Modal */
+#modal {
+  display: none;
+  position: fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.75);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+#modalContent {
+  background: rgba(255,255,255,0.1);
+  padding: 25px 30px;
+  border-radius: 15px;
+  text-align: center;
+  color: #fff;
+}
+
+#modal button {
+  margin-top: 15px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  color: #2b5876;
+  font-weight: bold;
+}
+
+/* Animations */
+@keyframes beat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- Background Music -->
+<audio id="bgMusic" autoplay loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="card">
+  <div class="heart">🤍</div>
+
+  <h1>Just wanted to say…</h1>
+  <h2>Good Night, <span id="herName">Dummmmmmu</span> 🌙</h2>
+
+  <!-- Slideshow -->
+  <div class="slideshow">
+    <img src="photo1.jpg" class="active">
+    <img src="photo2.jpg">
+    <img src="photo3.jpg">
+  </div>
+
+  <p id="caption" style="font-style: italic; opacity: 0.85; margin-top: 10px;">
+    your beautiful smile
+  </p>
+
+  <!-- Pause / Message Button -->
+  <button id="pauseBtn">Dummu are you hungry???</button>
+
+  <p>
+    I don’t know how your day went,  
+    but I hope it ends gently.
+  </p>
+
+  <p>
+    You don’t need to do anything right now.  
+    Just rest. Tomorrow can wait.
+  </p>
+
+  <p style="margin-top:15px; font-style:italic; opacity:0.8;">
+    Did you smile even a little while reading this?
+  </p>
+
+  <p style="margin-top:15px;">— <b id="yourName">Mounesh</b></p>
+
+  <!-- Hidden Message -->
+  <div class="secret-btn" onclick="revealMessage()">tap gently ✨</div>
+  <div class="secret-message" id="secretMsg">
+    You matter more than you know 🤍
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal">
+  <div id="modalContent">
+    <p>Hey Dummu 💖 Take a break and enjoy this moment!</p>
+    <button id="closeModal">Continue</button>
+  </div>
+</div>
+
+<script>
+/* Slideshow & Captions */
+let slides = document.querySelectorAll(".slideshow img");
+let captions = ["your beautiful smile", "your beautiful eyes", "your childlike innocence"];
+let captionEl = document.getElementById("caption");
+let i = 0;
+let shown = [false, false, false];
+captionEl.textContent = captions[0];
+shown[0] = true;
+
+let interval = setInterval(nextSlide, 3500);
+
+function nextSlide() {
+  slides[i].classList.remove("active");
+  i = (i + 1) % slides.length;
+  slides[i].classList.add("active");
+
+  if (!shown[i]) {
+    captionEl.textContent = captions[i];
+    shown[i] = true;
+  } else {
+    captionEl.textContent = "";
+  }
+}
+
+/* Pause / Play & Music */
+let paused = false;
+let bgMusic = document.getElementById("bgMusic");
+let modal = document.getElementById("modal");
+
+document.getElementById("pauseBtn").addEventListener("click", () => {
+  if (!paused) {
+    clearInterval(interval);
+    bgMusic.pause();
+    modal.style.display = "flex"; // show modal
+  }
+});
+
+/* Close modal and resume */
+document.getElementById("closeModal").addEventListener("click", () => {
+  modal.style.display = "none";
+  interval = setInterval(nextSlide, 3500);
+  bgMusic.play();
+});
+  
+/* Hidden Message */
+function revealMessage() {
+  document.getElementById("secretMsg").style.display = "block";
+}
+</script>
+</body>
+</html>
